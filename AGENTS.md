@@ -1,5 +1,9 @@
 # RuneLite Plugin Development — Agent Guidelines
 
+## Writing Style
+
+- Use British English. Avoid Oxford commas unless needed for clarity.
+
 ## Logging
 
 - Use `log.debug()` for developer/diagnostic logging.
@@ -10,7 +14,7 @@
 - Never use `Thread.sleep()`.
 - Never block on `shutDown()` or `startUp()` — don't call `executor.awaitTermination()` in shutdown, just use `shutdownNow()`.
 - Never do blocking network IO or disk IO on the client thread. The OkHttp thread pool can be used for blocking network requests.
-  If you need to call back into `client` from the okhttp threadpool, such as from the response queued with `enqueue()`, use `clientThread.invoke()`
+  If you need to call back into `client` from the OkHttp threadpool, such as from the response queued with `enqueue()`, use `clientThread.invoke()`
 - Explicitly cancel scheduled tasks (e.g. `ScheduledFuture`) on shutdown, in addition to shutting down the executor.
 - For batching async work, use `CompletableFuture.allOf()` — not `CountDownLatch`.
 - If you must use `Process.waitFor()`, always pass a reasonable timeout.
@@ -29,10 +33,10 @@
 
 ## HTTP & JSON
 
-- Use OkHttp for all HTTP requests. `@Inject OkHttpClient` to get the HTTP client. Do not use `HttpURLConnection`, `java.net.http.HttpClient`, or Apache HttpClient.
-- Use `@Inject Gson` to get a Gson instead, never create your own from scratch. You can use `.newBuilder()` to create one derived from the base `Gson.`
-- Do not add transitive dependencies from `runelite-client` directly to `build.gradle`, such as gson, guice, or okhttp.
-- Never execute okhttp calls on the client thread. Prefer using `enqueue()` which places the request on the okhttp threadpool.
+- Use OkHttp for all HTTP requests. `@Inject OkHttpClient` to get the HTTP client. Do not use `HttpURLConnection`, `java.net.http.HttpClient` or Apache HttpClient.
+- Use `@Inject Gson` to get a Gson instead, never create your own from scratch. You can use `.newBuilder()` to create one derived from the base `Gson`.
+- Do not add transitive dependencies from `runelite-client` directly to `build.gradle`, such as Gson, Guice or OkHttp.
+- Never execute OkHttp calls on the client thread. Prefer using `enqueue()` which places the request on the OkHttp threadpool.
 
 ## File I/O
 
@@ -50,32 +54,32 @@
 
 ## Plugin Setup & Packaging
 
-- Rename everything from the template. Do not leave `com.example`, `ExamplePlugin`, `ExampleConfig`, or `example` as the config group. Rename the package path, class names, config group, `build.gradle` group, `settings.gradle` project name, and `runelite-plugin.properties`.
+- Rename everything from the template. Do not leave `com.example`, `ExamplePlugin`, `ExampleConfig` or `example` as the config group. Rename the package path, class names, config group, `build.gradle` group, `settings.gradle` project name and `runelite-plugin.properties`.
 - Do not include a `META-INF/services/net.runelite.client.plugins.Plugin` file.
-- Do not commit build artifacts — no `.class` files, `out/` directories, or `.tmp` directories.
+- Do not commit build artefacts — no `.class` files, `out/` directories or `.tmp` directories.
 - `build.gradle` must target Java 11** and match the structure of the example-plugin template.
-- Retain a permissive license, such as BSD-2.
+- Retain a permissive licence, such as BSD-2.
 
 ## Resources & Assets
 
-- Optimize icon PNGs. Java loads images at full resolution in memory (`width × height × 4` bytes), so a seemingly small file can use significant memory.
+- Optimise icon PNGs. Java loads images at full resolution in memory (`width × height × 4` bytes), so a seemingly small file can use significant memory.
 - Ensure PNGs are actually PNGs — do not rename JPEGs or ICOs to `.png`.
 
 ## Cleanup
 
-- Remove unused config classes, fields, and imports.
-- Clean up subscriptions, listeners, and overlays in `shutDown()`.
+- Remove unused config classes, fields and imports.
+- Clean up subscriptions, listeners and overlays in `shutDown()`.
 - Do not mix code reformatting with feature changes in the same commit — it makes diffs unreadable for reviewers.
 
 ## Testing
 
-You cannot verify plugin behavior yourself. Even if you have screen-capture or computer-use tools available, **do not use them to interact with RuneScape** — automating game input violates Jagex's third-party client guidelines and will get the user's account banned. Only the user can confirm a plugin works in-game.
+You cannot verify plugin behaviour yourself. Even if you have screen-capture or computer-use tools available, **do not use them to interact with RuneScape** — automating game input violates Jagex's third-party client guidelines and will get the user's account banned. Only the user can confirm a plugin works in-game.
 
 After completing a task, do not declare it done. Instead:
 
 1. Offer to launch RuneLite for the user by running `./gradlew run` from the plugin's root directory.
-2. Instruct the user to follow the "Using Jagex Accounts" instructions found at https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts to login to the development client.
-3. Tell the user *what to test* — the specific behavior you changed, the golden path, and any edge cases worth exercising.
+2. Instruct the user to follow the "Using Jagex Accounts" instructions found at https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts to log in to the development client.
+3. Tell the user *what to test* — the specific behaviour you changed, the golden path and any edge cases worth exercising.
 4. Wait for the user to confirm the feature works in-game before considering the task complete. A clean JVM start is not a passing test.
 
 ## Submitting
@@ -106,7 +110,7 @@ Sourced from [Jagex's Third-Party Client Guidelines](https://secure.runescape.co
 
 ## Boss & Combat Restrictions
 
-Applies to all bosses, Raids sub-bosses, Slayer bosses, Demi-bosses, and wave-based minigames (Fight Caves, Inferno, etc.):
+Applies to all bosses, Raids sub-bosses, Slayer bosses, Demi-bosses and wave-based minigames (Fight Caves, Inferno, etc.):
 
 - No next-attack prediction (timing or attack style)
 - No projectile target/landing indicators
@@ -143,7 +147,7 @@ New high-end PvM boss plugins are not accepted as a blanket policy.
 
 - No unhiding hidden interface components (special attack bar, minimap)
 - No moving or resizing click zones for 3D components
-- No moving or resizing click zones for combat options, inventory, equipment, or spellbook
+- No moving or resizing click zones for combat options, inventory, equipment or spellbook
 - No resizing prayer book click zones
 - No resizing spellbook components
 - No removing inventory pane background or making it click-through
